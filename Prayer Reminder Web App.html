@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Prayer Clock">
+<title>Prayer Clock</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{
+height:100%;
+width:100%;
+overflow:hidden;
+background:#000;
+color:#fff;
+font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;
+}
+body{
+display:grid;
+grid-template-rows: 42% 22% 10% 26%;
+}
+
+#currentPrayer{
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:min(16vw,95px);
+font-weight:800;
+color:#57d64f;
+letter-spacing:2px;
+text-align:center;
+}
+
+.middle{
+display:grid;
+grid-template-columns:1fr 1fr 1fr;
+border-top:1px solid #222;
+border-bottom:1px solid #222;
+}
+
+.panel{
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+}
+
+.label{
+font-size:12px;
+letter-spacing:2px;
+color:#888;
+margin-bottom:6px;
+}
+
+.clockRow{
+display:flex;
+align-items:flex-start;
+}
+
+#clock{
+font-size:min(8vw,52px);
+font-weight:700;
+line-height:1;
+}
+
+#ampm{
+font-size:18px;
+margin-left:5px;
+margin-top:6px;
+font-weight:600;
+}
+
+#nextPrayer{
+font-size:min(7vw,42px);
+font-weight:700;
+}
+
+#countdown{
+font-size:min(6vw,36px);
+font-weight:700;
+color:#57d64f;
+}
+
+.dateWrap{
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+#date{
+font-size:22px;
+font-weight:500;
+color:#fff;
+}
+
+.bottom{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+border-top:1px solid #222;
+}
+
+.prayer{
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+border-right:1px solid #222;
+}
+
+.prayer:last-child{
+border-right:none;
+}
+
+.prayer-name{
+font-size:14px;
+margin-bottom:8px;
+}
+
+.prayer-time{
+font-size:22px;
+font-weight:700;
+}
+
+.active{
+color:#57d64f;
+}
+</style>
+</head>
+<body>
+
+<div id="currentPrayer">LOADING...</div>
+
+<div class="middle">
+
+<div class="panel">
+<div class="label">TIME</div>
+<div class="clockRow">
+<div id="clock">--:--</div>
+<div id="ampm">PM</div>
+</div>
+</div>
+
+<div class="panel">
+<div class="label">NEXT PRAYER</div>
+<div id="nextPrayer">...</div>
+</div>
+
+<div class="panel">
+<div class="label">REMAINING</div>
+<div id="countdown">...</div>
+</div>
+
+</div>
+
+<div class="dateWrap">
+<div id="date">Loading...</div>
+</div>
+
+<div id="prayerGrid" class="bottom"></div>
+
+<script>
+
+const city="Cairo";
+const country="Egypt";
+let prayerTimes={};
+
+async function loadPrayerTimes(){
+
+const today=new Date();
+
+const date=
+today.getDate()+"-"+
+(today.getMonth()+1)+"-"+
+today.getFullYear();
+
+const res=await fetch(
+`https://api.aladhan.com/v1/timingsByCity/${date}?city=${city}&country=${country}&method=5`
+);
+
+const data=await res.json();
+
+prayerTimes={
+Fajr:data.data.timings.Fajr,
+Dhuhr:data.data.timings.Dhuhr,
+Asr:data.data.timings.Asr,
+Maghrib:data.data.timings.Maghrib,
+Isha:data.data.timings.Isha
+};
+
+renderPrayerGrid();
+}
+
+function parsePrayerTime(time){
+const [h,m]=time.split(":").map(Number);
+const d=new Date();
+d.setHours(h,m,0,0);
+return d;
+}
+
+function convert12Hour(time){
+
+let [h,m]=time.split(":");
+h=parseInt(h);
+
+h=h%12||12;
+
+return `${h}:${m}`;
+}
+
+function getPrayerInfo(){
+
+const now=new Date();
+const prayers=Object.entries(prayerTimes);
+
+let current="Fajr";
+let next="Dhuhr";
+let nextTime=parsePrayerTime(prayers[1][1]);
+
+for(let i=0;i<prayers.length;i++){
+
+const pTime=parsePrayerTime(prayers[i][1]);
+
+if(now>=pTime){
+
+current=prayers[i][0];
+
+if(i<prayers.length-1){
+
+next=prayers[i+1][0];
+nextTime=parsePrayerTime(prayers[i+1][1]);
+
+}else{
+
+next="Fajr";
+nextTime=parsePrayerTime(prayers[0][1]);
+nextTime.setDate(nextTime.getDate()+1);
+
+}
+}
+}
+
+return {current,next,nextTime};
+}
+
+function renderPrayerGrid(){
+
+if(!Object.keys(prayerTimes).length) return;
+
+const grid=document.getElementById("prayerGrid");
+const active=getPrayerInfo().current;
+
+grid.innerHTML="";
+
+Object.entries(prayerTimes).forEach(([name,time])=>{
+
+const div=document.createElement("div");
+
+div.className="prayer"+(name===active?" active":"");
+
+div.innerHTML=`
+<div class="prayer-name">${name.toUpperCase()}</div>
+<div class="prayer-time">${convert12Hour(time)}</div>
+`;
+
+grid.appendChild(div);
+
+});
+}
+
+function update(){
+
+const now=new Date();
+
+const timeString=now.toLocaleTimeString("en-US",{
+hour:"numeric",
+minute:"2-digit",
+hour12:true
+});
+
+const [time,ampm]=timeString.split(" ");
+
+clock.textContent=time;
+document.getElementById("ampm").textContent=ampm;
+
+document.getElementById("date").textContent=
+now.toLocaleDateString("en-US",{
+weekday:"long",
+day:"numeric",
+month:"long"
+}).replace(",","");
+
+if(!Object.keys(prayerTimes).length) return;
+
+const info=getPrayerInfo();
+
+document.getElementById("currentPrayer").textContent=
+info.current.toUpperCase();
+
+document.getElementById("nextPrayer").textContent=
+info.next.toUpperCase();
+
+const diff=info.nextTime-now;
+
+const hrs=Math.floor(diff/1000/60/60);
+const mins=Math.floor(diff/1000/60)%60;
+
+document.getElementById("countdown").textContent=
+`${hrs}h ${mins}m`;
+
+renderPrayerGrid();
+}
+
+loadPrayerTimes();
+update();
+
+setInterval(update,1000);
+setInterval(loadPrayerTimes,3600000);
+
+</script>
+</body>
+</html>
