@@ -5,31 +5,98 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Prayer Display</title>
+<title>Prayer Display v2</title>
 <style>
-:root{--bg:#000;--line:#1f1f1f;--text:#fff;--green:#00ff4c;}
+:root{--bg:#000;--line:#1f1f1f;--green:#00ff4c;}
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;overflow:hidden;background:#000;color:#fff;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+html,body{
+width:100%;height:100%;overflow:hidden;
+background:#000;color:#fff;
+font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+}
 .container{height:100vh;display:flex;flex-direction:column}
-.top{height:66%;display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--line)}
-.section{display:flex;flex-direction:column;justify-content:center;align-items:center;border-right:1px solid var(--line)}
+
+.top{
+height:55%;
+display:grid;
+grid-template-columns:1fr 1fr 1fr;
+border-bottom:1px solid var(--line);
+}
+
+.section{
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+border-right:1px solid var(--line);
+}
 .section:last-child{border-right:none}
-.heading{font-size:1.2vw;font-weight:700;letter-spacing:.15em;margin-bottom:2vh}
-.time-main{font-size:8vw;font-weight:900;line-height:1}
-.ampm{font-size:2vw;margin-top:1vh}
-.current-prayer{font-size:6vw;font-weight:900;color:var(--green);text-shadow:0 0 8px rgba(0,255,76,.4),0 0 20px rgba(0,255,76,.25)}
-.next-prayer{font-size:4vw;font-weight:900}
-.until{margin-top:2vh;font-size:1.2vw;opacity:.8}
-.countdown{margin-top:1vh;font-size:2.7vw;font-weight:900;color:var(--green)}
-.bottom{flex:1;display:grid;grid-template-columns:repeat(5,1fr)}
-.prayer-card{display:flex;flex-direction:column;justify-content:center;align-items:center;border-right:1px solid var(--line);transition:.4s}
+
+.heading{
+font-size:1.45vw;
+font-weight:700;
+letter-spacing:.15em;
+margin-bottom:1vh;
+}
+
+.time-main{font-size:9.5vw;font-weight:900;line-height:1}
+.ampm{font-size:2.4vw;margin-top:.2vh}
+
+.current-prayer{
+font-size:7.5vw;
+font-weight:900;
+color:var(--green);
+text-shadow:0 0 10px rgba(0,255,76,.55),0 0 25px rgba(0,255,76,.35);
+}
+
+.next-prayer{font-size:5vw;font-weight:900}
+.until{margin-top:.5vh;font-size:1.4vw}
+.countdown{margin-top:.2vh;font-size:3.3vw;font-weight:900;color:var(--green)}
+
+.bottom{
+flex:1;
+display:grid;
+grid-template-columns:repeat(5,1fr);
+}
+
+.prayer-card{
+display:flex;
+flex-direction:column;
+justify-content:space-evenly;
+align-items:center;
+border-right:1px solid var(--line);
+padding:6px 0;
+transition:.4s;
+}
 .prayer-card:last-child{border-right:none}
-.prayer-card.active{background:rgba(0,255,76,.08);box-shadow:inset 0 0 30px rgba(0,255,76,.15)}
-.prayer-card.next{outline:2px solid rgba(0,255,76,.45);outline-offset:-2px}
-.prayer-name{font-size:1.1vw;font-weight:700}
-.prayer-time{font-size:2.2vw;font-weight:900}
-.prayer-icon{width:42px;height:42px;margin:12px 0;filter:drop-shadow(0 0 3px rgba(0,255,76,.4)) drop-shadow(0 0 8px rgba(0,255,76,.25));}
-.prayer-icon *{fill:none;stroke:#00ff4c;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+
+.prayer-card.active{
+background:rgba(0,255,76,.08);
+box-shadow:inset 0 0 30px rgba(0,255,76,.15);
+}
+
+.prayer-card.next{
+background:rgba(0,255,76,.05);
+outline:2px solid rgba(0,255,76,.45);
+outline-offset:-2px;
+}
+
+.prayer-name{font-size:1.9vw;font-weight:700}
+.prayer-time{font-size:3.8vw;font-weight:900}
+
+.prayer-icon{
+width:62px;height:62px;margin:2px 0;
+filter:drop-shadow(0 0 3px rgba(0,255,76,.4))
+drop-shadow(0 0 8px rgba(0,255,76,.25));
+}
+
+.prayer-icon *{
+fill:none;
+stroke:#00ff4c;
+stroke-width:2.4;
+stroke-linecap:round;
+stroke-linejoin:round;
+}
 </style>
 </head>
 <body>
@@ -40,10 +107,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:#fff;font
 <div id="clock" class="time-main">--:--</div>
 <div id="ampm" class="ampm">PM</div>
 </div>
+
 <div class="section">
 <div class="heading">CURRENT PRAYER</div>
 <div id="currentPrayer" class="current-prayer">ISHA</div>
 </div>
+
 <div class="section">
 <div class="heading">NEXT PRAYER</div>
 <div id="nextPrayer" class="next-prayer">FAJR</div>
@@ -57,27 +126,32 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:#fff;font
 <div class="prayer-card" id="card-Fajr">
 <div class="prayer-name">FAJR</div>
 <svg class="prayer-icon" viewBox="0 0 64 64"><line x1="12" y1="42" x2="52" y2="42"/><path d="M18 42 A14 14 0 0 1 46 42"/><line x1="32" y1="12" x2="32" y2="20"/><line x1="18" y1="18" x2="23" y2="23"/><line x1="46" y1="18" x2="41" y2="23"/><line x1="10" y1="30" x2="18" y2="30"/><line x1="54" y1="30" x2="46" y2="30"/></svg>
-<div id="Fajr" class="prayer-time">--:--</div></div>
+<div id="Fajr" class="prayer-time">--:--</div>
+</div>
 
 <div class="prayer-card" id="card-Dhuhr">
 <div class="prayer-name">DHUHR</div>
 <svg class="prayer-icon" viewBox="0 0 64 64"><circle cx="32" cy="32" r="10"/><line x1="32" y1="8" x2="32" y2="18"/><line x1="32" y1="46" x2="32" y2="56"/><line x1="8" y1="32" x2="18" y2="32"/><line x1="46" y1="32" x2="56" y2="32"/><line x1="15" y1="15" x2="22" y2="22"/><line x1="42" y1="42" x2="49" y2="49"/><line x1="49" y1="15" x2="42" y2="22"/><line x1="22" y1="42" x2="15" y2="49"/></svg>
-<div id="Dhuhr" class="prayer-time">--:--</div></div>
+<div id="Dhuhr" class="prayer-time">--:--</div>
+</div>
 
 <div class="prayer-card" id="card-Asr">
 <div class="prayer-name">ASR</div>
-<svg class="prayer-icon" viewBox="0 0 64 64"><line x1="12" y1="42" x2="52" y2="42"/><path d="M18 42 A14 14 0 0 1 46 42"/><line x1="32" y1="12" x2="32" y2="20"/><line x1="18" y1="18" x2="23" y2="23"/><line x1="46" y1="18" x2="41" y2="23"/><line x1="10" y1="30" x2="18" y2="30"/><line x1="54" y1="30" x2="46" y2="30"/></svg>
-<div id="Asr" class="prayer-time">--:--</div></div>
+<svg class="prayer-icon" viewBox="0 0 64 64"><line x1="12" y1="42" x2="52" y2="42"/><path d="M18 42 A14 14 0 0 1 46 42"/></svg>
+<div id="Asr" class="prayer-time">--:--</div>
+</div>
 
 <div class="prayer-card" id="card-Maghrib">
 <div class="prayer-name">MAGHRIB</div>
-<svg class="prayer-icon" viewBox="0 0 64 64"><line x1="12" y1="42" x2="52" y2="42"/><path d="M18 42 A14 14 0 0 1 46 42"/><line x1="32" y1="12" x2="32" y2="20"/><line x1="18" y1="18" x2="23" y2="23"/><line x1="46" y1="18" x2="41" y2="23"/><line x1="10" y1="30" x2="18" y2="30"/><line x1="54" y1="30" x2="46" y2="30"/></svg>
-<div id="Maghrib" class="prayer-time">--:--</div></div>
+<svg class="prayer-icon" viewBox="0 0 64 64"><line x1="12" y1="42" x2="52" y2="42"/><path d="M18 42 A14 14 0 0 1 46 42"/></svg>
+<div id="Maghrib" class="prayer-time">--:--</div>
+</div>
 
 <div class="prayer-card" id="card-Isha">
 <div class="prayer-name">ISHA</div>
 <svg class="prayer-icon" viewBox="0 0 64 64"><path d="M39 10 A18 18 0 1 0 39 54 A14 14 0 1 1 39 10"/><path d="M49 14 L50.5 18 L55 18 L51.5 20.8 L53 25 L49 22.5 L45 25 L46.5 20.8 L43 18 L47.5 18 Z"/></svg>
-<div id="Isha" class="prayer-time">--:--</div></div>
+<div id="Isha" class="prayer-time">--:--</div>
+</div>
 
 </div></div>
 
@@ -86,12 +160,16 @@ const LATITUDE=30.0444,LONGITUDE=31.2357,METHOD=5;
 let prayerTimes={},loadedDate="";
 
 function cleanTime(t){return t.split(" ")[0];}
+function pad(n){return String(n).padStart(2,"0");}
+function mins(t){const[h,m]=t.split(":");return +h*60 + +m;}
+function to12(t){let[h,m]=t.split(":");h=parseInt(h);h=h%12||12;return `${h}:${m}`;}
 
 async function loadPrayerTimes(){
  const today=new Date().toISOString().split("T")[0];
  if(today===loadedDate)return;
  const r=await fetch(`https://api.aladhan.com/v1/timings?latitude=${LATITUDE}&longitude=${LONGITUDE}&method=${METHOD}`);
  const d=await r.json();
+
  prayerTimes={
  Fajr:cleanTime(d.data.timings.Fajr),
  Dhuhr:cleanTime(d.data.timings.Dhuhr),
@@ -99,30 +177,40 @@ async function loadPrayerTimes(){
  Maghrib:cleanTime(d.data.timings.Maghrib),
  Isha:cleanTime(d.data.timings.Isha)
  };
- Object.entries(prayerTimes).forEach(([n,t])=>document.getElementById(n).textContent=to12(t));
+
+ Object.entries(prayerTimes).forEach(([n,t])=>{
+  document.getElementById(n).textContent=to12(t);
+ });
+
  loadedDate=today;
 }
-
-function to12(t){let[h,m]=t.split(":");h=parseInt(h);h=h%12||12;return `${h}:${m}`;}
-function mins(t){const[h,m]=t.split(":");return +h*60 + +m;}
-function pad(n){return String(n).padStart(2,"0");}
 
 function update(){
  const now=new Date();
  const h=now.getHours(),m=now.getMinutes(),s=now.getSeconds();
- document.getElementById("clock").textContent=`${h%12||12}:${pad(m)}`;
- document.getElementById("ampm").textContent=h>=12?"PM":"AM";
+
+ clock.textContent=`${h%12||12}:${pad(m)}`;
+ ampm.textContent=h>=12?"PM":"AM";
 
  const currentM=h*60+m;
- const p=[["Fajr",mins(prayerTimes.Fajr||"05:00")],["Dhuhr",mins(prayerTimes.Dhuhr||"12:00")],["Asr",mins(prayerTimes.Asr||"15:00")],["Maghrib",mins(prayerTimes.Maghrib||"18:00")],["Isha",mins(prayerTimes.Isha||"19:00")]];
+
+ const p=[
+ ["Fajr",mins(prayerTimes.Fajr||"05:00")],
+ ["Dhuhr",mins(prayerTimes.Dhuhr||"12:00")],
+ ["Asr",mins(prayerTimes.Asr||"15:00")],
+ ["Maghrib",mins(prayerTimes.Maghrib||"18:00")],
+ ["Isha",mins(prayerTimes.Isha||"19:00")]
+ ];
 
  let current="Isha",next="Fajr",nextTime=p[0][1]+1440;
+
  for(let i=0;i<p.length;i++){
   if(currentM>=p[i][1]) current=p[i][0];
   if(currentM<p[i][1]){next=p[i][0];nextTime=p[i][1];break;}
  }
 
  let diff=(nextTime*60)-(currentM*60+s);
+
  const hrs=Math.floor(diff/3600);
  const minsLeft=Math.floor((diff%3600)/60);
  const secs=diff%60;
@@ -140,7 +228,9 @@ function update(){
 
 async function init(){
  await loadPrayerTimes();
- if("wakeLock" in navigator){try{await navigator.wakeLock.request("screen")}catch(e){}}
+ if("wakeLock" in navigator){
+   try{await navigator.wakeLock.request("screen")}catch(e){}
+ }
  update();
  setInterval(update,1000);
 }
